@@ -309,8 +309,7 @@
             }
             // Food Intersects
             if (body[0].intersects(fruit)) {
-                body.push(new Rectangle(0, 0, 10, 10));
-                score += 1;
+                score += 10;
                 fruit.x = random(canvas.width / 10 - 1) * 10;
                 fruit.y = random(canvas.height / 10 - 1) * 10;
             }
