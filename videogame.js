@@ -18,6 +18,12 @@
         food = undefined,
         iBody = new Image(),
         iFood = new Image();
+    
+    var lastUpdate = 0, 
+        FPS = 0,
+        frames = 0,
+        acumDelta = 0;
+        
 
     window.requestAnimationFrame = (function () {
         return window.requestAnimationFrame ||
@@ -38,7 +44,7 @@
         this.width = (width === undefined) ? 0 : width;
         this.height = (height === undefined) ? this.width : height;
 
-        Rectangle.prototype.drawImage = function (ctx, img) {
+        /*this.drawImage = function (ctx, img) {
             if (img === undefined) {
                 window.console.warn('Missing parameters on function drawImage');
             } else {
@@ -51,7 +57,7 @@
         };
             
 
-        Rectangle.prototype.intersects = function (rect) {
+        this.intersects = function (rect) {
             if (rect === undefined) {
                 window.console.warn('Missing parameters on function intersects');
             } else {
@@ -61,14 +67,79 @@
                     this.y + this.height > rect.y);
             }
         };
-        Rectangle.prototype.fill = function (ctx) {
+        this.fill = function (ctx) {
             if (ctx === undefined) {
                 window.console.warn('Missing parameters on function fill');
             } else {
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             }
-        };
+        };*/
     }
+    Rectangle.prototype = {
+        constructor: Rectangle,
+
+        intersects: function (rect) {
+            if (rect === undefined) {
+                window.console.warn('Missing parameters on function intersects');
+            } else {
+                return (this.x < rect.x + rect.width &&
+                    this.x + this.width > rect.x &&
+                    this.y < rect.y + rect.height &&
+                    this.y + this.height > rect.y);
+            }
+        },
+
+        fill: function (ctx) {
+            if (ctx === undefined) {
+                window.console.warn('Missing parameters on function fill');
+            } else {
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        },
+
+        drawImage: function (ctx, img) {
+            if (img === undefined) {
+                window.console.warn('Missing parameters on function drawImage');
+            } else {
+                if (img.width) {
+                    ctx.drawImage(img, this.x, this.y);
+                } else {
+                    ctx.strokeRect(this.x, this.y, this.width, this.height);
+                }
+            }
+        }
+    };
+
+    /*Rectangle.prototype.intersects = function (rect) {
+        if (rect === undefined) {
+            window.console.warn('Missing parameters on function intersects');
+        } else {
+            return (this.x < rect.x + rect.width &&
+                this.x + this.width > rect.x &&
+                this.y < rect.y + rect.height &&
+                this.y + this.height > rect.y);
+        }
+    };
+
+    Rectangle.prototype.fill = function (ctx) {
+        if (ctx === undefined) {
+            window.console.warn('Missing parameters on function fill');
+        } else {
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    };
+
+    Rectangle.prototype.drawImage = function (ctx, img) {
+        if (img === undefined) {
+            window.console.warn('Missing parameters on function drawImage');
+        } else {
+            if (img.width) {
+                ctx.drawImage(img, this.x, this.y);
+            } else {
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
+            }
+        }
+    };*/
 
     function random(max) {
         return ~~(Math.random() * max);
@@ -94,6 +165,7 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         // Draw player
         //ctx.fillStyle = '#0f0';
+        ctx.strokeStyle = '#f00';
         for (i = 0, l = body.length; i < l; i += 1) {
             //body[i].fill(ctx);
             body[i].drawImage(ctx, iBody);
@@ -108,10 +180,13 @@
         // Draw food
         //ctx.fillStyle = '#f00';
         //food.fill(ctx);
+        ctx.strokeStyle = '#f00';
         food.drawImage(ctx, iFood);
         // Debug last key pressed
         ctx.fillStyle = '#fff';
         //ctx.fillText('Last Press: ' + lastPress, 0, 20);
+        ctx.fillText('FPS: ' + FPS, 50, 10);
+
 
         // Draw score
         ctx.fillText('Score: ' + score, 0, 10);
@@ -226,8 +301,23 @@
         paint(ctx);
     } 
     function run() {
-        setTimeout(run, 50);
+        window.requestAnimationFrame(run);
+
+        var now = Date.now(),
+            deltaTime = (now - lastUpdate) / 1000;
+        if (deltaTime > 1) {
+            deltaTime = 0;
+        }
+        lastUpdate = now;
+        frames += 1;
+        acumDelta += deltaTime;
+        if (acumDelta > 1) {
+            FPS = frames;
+            frames = 0;
+            acumDelta -= 1;
+        }
         act();
+        paint(ctx);
     }
     function init() {
         // Get canvas and context
