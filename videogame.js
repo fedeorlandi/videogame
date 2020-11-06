@@ -23,6 +23,13 @@
         FPS = 0,
         frames = 0,
         acumDelta = 0;
+    
+    var buffer = null,
+        bufferCtx = null;
+
+    var bufferScale = 1,
+        bufferOffsetX = 0,
+        bufferOffsetY = 0;
         
 
     window.requestAnimationFrame = (function () {
@@ -145,6 +152,15 @@
         return ~~(Math.random() * max);
     }
 
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        var w = window.innerWidth / buffer.width;
+        var h = window.innerHeight / buffer.height;
+        bufferScale = Math.min(h, w);
+        bufferOffsetX = (canvas.width - (buffer.width * bufferScale)) / 2;
+        bufferOffsetY = (canvas.height - (buffer.height * bufferScale)) / 2;
+    }
     function reset() {
         score = 0;
         dir = 1;
@@ -298,7 +314,12 @@
     }
     function repaint() {
         window.requestAnimationFrame(repaint);
-        paint(ctx);
+        paint(bufferCtx);
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(buffer, bufferOffsetX, bufferOffsetY, buffer.width * bufferScale, buffer.height * bufferScale)
     } 
     function run() {
         window.requestAnimationFrame(run);
@@ -328,6 +349,12 @@
         iFood.src = 'images/Fruta.png';
         // Create food
         food = new Rectangle(80, 80, 10, 10);
+
+        // Load buffer
+        buffer = document.createElement('canvas');
+        bufferCtx = buffer.getContext('2d');
+        buffer.width = 300;
+        buffer.height = 150;
         // Create walls
         //wall.push(new Rectangle(100, 50, 10, 10));
         //wall.push(new Rectangle(100, 100, 10, 10));
@@ -337,5 +364,6 @@
         run();
         repaint();
     }
+    window.addEventListener('resize', resize, false);
     window.addEventListener('load', init, false);
 }(window));
