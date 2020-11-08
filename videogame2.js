@@ -132,6 +132,21 @@
         }
     }
 
+    const peticion= {
+        method: 'POST'}
+    function sendinformacion (score){
+        fetch(`https://jsonplaceholder.typicode.com/users/1/posts?${score}`, peticion)
+        .then(function(response) {
+            if(response.ok) {
+                console.log('Your score has been update')
+                console.log(response)
+            }
+        })
+        .catch(function(err) {
+            console.log('Error');
+        });
+    }
+
     function init() {
         // Get canvas and context
         canvas = document.getElementById('canvas');
@@ -312,6 +327,8 @@
                 score += 10;
                 fruit.x = random(canvas.width / 10 - 1) * 10;
                 fruit.y = random(canvas.height / 10 - 1) * 10;
+                sendinformacion(score)
+                
             }
             // Wall Intersects
             //for (i = 0, l = wall.length; i < l; i += 1) {
