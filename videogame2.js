@@ -138,12 +138,12 @@
         fetch(`https://jsonplaceholder.typicode.com/users/1/posts?${score}`, peticion)
         .then(function(response) {
             if(response.ok) {
-                console.log('Your score has been update')
+                console.log('Score sent successfully')
                 console.log(response)
             }
         })
         .catch(function(err) {
-            console.log('Error');
+            console.log('Error trying to send the score');
         });
     }
 
@@ -238,7 +238,7 @@
         // Draw Fruit
 
         ctx.strokeStyle = '#f00';
-        fruit.drawImage(ctx, iFruit);
+        window.setTimeout(fruit.drawImage(ctx, iFruit), random(300)+5000);
 
         // Draw score
         ctx.fillStyle = '#fff';
@@ -325,10 +325,13 @@
             // Food Intersects
             if (body[0].intersects(fruit)) {
                 score += 10;
-                fruit.x = random(canvas.width / 10 - 1) * 10;
-                fruit.y = random(canvas.height / 10 - 1) * 10;
-                sendinformacion(score)
-                
+                fruit.x = canvas.width+1;
+                fruit.y = null;
+                setTimeout(function fPlus() {
+                    fruit.x = random(canvas.width / 10 - 1) * 10;
+                    fruit.y = random(canvas.height / 10 - 1) * 10;
+                }, random(3000)+5000)
+                sendinformacion(score)    
             }
             // Wall Intersects
             //for (i = 0, l = wall.length; i < l; i += 1) {
