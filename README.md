@@ -1,3 +1,3 @@
 # videogame
 
-GithubPages: file:///C:/Users/Acer/Desktop/videogame/index.html
+GithubPages: https://fedeorlandi.github.io/videogame/index.html
